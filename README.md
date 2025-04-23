@@ -37,6 +37,8 @@ All registers are:
 - **Throughput**: `1 / Tclock` (maximum rate = clock frequency)
 
 ![Image](https://github.com/user-attachments/assets/19e32720-f45a-40e1-b293-393ac2a04a86)
+
+
 ---
 
 ## Sequential Divider Description
@@ -77,3 +79,55 @@ Steps:
 
 ![Image](https://github.com/user-attachments/assets/6c295d93-eef5-4228-a08d-98c3b5b95c71)
 
+
+---
+
+
+## Simulations
+
+In  order to verify the logical correctness of the code, two separate testbenches were implemented: one for the serial implementation and one for the combinational version. The primary difference between the two lies in the frequency at which input signals are applied.
+
+Both testbenches include the generation of the clock signal, reset signal, and a series of numerical values assigned to the input signals. In the testbench for the serial divider, it was also necessary to generate a start signal to manage the initiation of the computation process.
+
+![Image](https://github.com/user-attachments/assets/7faf81bd-5c0f-4a64-bd29-aeb7a1ac06dc)
+
+## FPGA Deployment 
+
+For both versions of the divider, compilation was carried out by mapping the RTL code onto the EP4CE6E22C9L FPGA device, which belongs to Intel’s Cyclone IV family. The compiler was used in "balanced" mode.
+
+To compare the performance of the two divider implementations, both Timing and Power analyses were performed.
+
+### Timing Analysis
+
+The Timing Analysis was conducted to determine the maximum operating frequency for both implementations of the divider that satisfies the setup and hold constraints of the registers. The clock period was specified using a dedicated .sdc file and progressively reduced until one of the constraints was violated.
+
+![Image](https://github.com/user-attachments/assets/85894cfb-09b6-4698-a4ae-1433c0b0ddfd)
+
+![Image](https://github.com/user-attachments/assets/d210e0a6-c9df-4848-88d2-91645f58371c)
+
+As expected, the combinational divider requires a significantly longer clock period compared to the serial implementation—though it completes the operation in a single cycle. This is because the combinational division block consists of many more logic elements than its serial counterpart.
+
+To satisfy the setup constraint (evaluated under worst-case conditions: slow corner, 1V, 85°C), the combinational divider requires a minimum clock period of 73 ns, whereas the serial divider operates correctly with a minimum period of just 7 ns.
+
+
+## 🔋 Power Analysis
+
+Power analysis was performed using both a fixed activity factor and one derived from input transitions in the testbench. The results align with theoretical expectations:
+
+- **Dynamic Power (`core dynamic`)**:  
+  Higher in the **serial** divider due to its direct dependency on clock frequency. The same applies to **clock control** power.
+
+- **Static Power (`core static`)**:  
+  Similar in both versions, as it does not depend on clock frequency but is sensitive to temperature.
+
+- **Combinational Logic Power (`combinational cell`)**:  
+  Significantly higher in the **combinatorial** divider, due to the larger number of logic elements and increased toggle rate.
+
+> **Conclusion:**  
+> The **combinatorial** divider consumes more power *per cycle*, but the **serial** divider requires *more cycles* to complete a division.  
+> 🧮 **Result:** Total energy consumption per operation is **higher in the serial implementation**.
+
+
+![Image](https://github.com/user-attachments/assets/fb465116-1758-4952-8652-5963c4c1437a)
+
+![Image](https://github.com/user-attachments/assets/94a7f03e-ac50-4a50-8e69-3a223eb11d57)
