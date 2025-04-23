@@ -36,6 +36,7 @@ All registers are:
 - **Latency**: 1 clock cycle
 - **Throughput**: `1 / Tclock` (maximum rate = clock frequency)
 
+![Image](https://github.com/user-attachments/assets/19e32720-f45a-40e1-b293-393ac2a04a86)
 ---
 
 ## Sequential Divider Description
@@ -73,4 +74,6 @@ Steps:
 
 - **Latency**: The total latency, defined as the time interval between the input sampling and the corresponding output availability, is **17 clock cycles**.
 - **Throughput**: The maximum frequency at which the `start` signal can be asserted is `1 / (17 * Tclock)`.
+
+![Image](https://github.com/user-attachments/assets/6c295d93-eef5-4228-a08d-98c3b5b95c71)
 
